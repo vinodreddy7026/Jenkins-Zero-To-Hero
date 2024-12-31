@@ -57,9 +57,11 @@ pipeline {
                     git config user.name "Vinod Kumar S"
                     BUILD_NUMBER=${BUILD_NUMBER}
                     if [ -z "$(git symbolic-ref --short HEAD 2>/dev/null)" ]; then
-                        git checkout -b main || true
+                       git checkout main || git checkout -b main
                     fi
                     sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
+                    echo "java-maven-sonar-argocd-helm-k8s/spring-boot-app/target/" >> .gitignore
+                    git add .gitignore
                     git add java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
                     git commit -m "Update deployment image to version ${BUILD_NUMBER}" || true
                     git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
